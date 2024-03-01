@@ -1,0 +1,17 @@
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\bin\Debug\net8.0\BengansBowling.exe
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\bin\Debug\net8.0\BengansBowling.deps.json
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\bin\Debug\net8.0\BengansBowling.runtimeconfig.json
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\bin\Debug\net8.0\BengansBowling.dll
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\bin\Debug\net8.0\BengansBowling.pdb
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansBowling.csproj.AssemblyReference.cache
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansBowling.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansBowling.AssemblyInfoInputs.cache
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansBowling.AssemblyInfo.cs
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansBowling.csproj.CoreCompileInputs.cache
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansB.B18C82DA.Up2Date
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansBowling.dll
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\refint\BengansBowling.dll
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansBowling.pdb
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\BengansBowling.genruntimeconfig.cache
+C:\Users\46707\source\repos\BengansBowling\BengansBowling\obj\Debug\net8.0\ref\BengansBowling.dll

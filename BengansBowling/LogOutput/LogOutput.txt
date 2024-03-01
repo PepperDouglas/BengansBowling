@@ -1,0 +1,25 @@
+2024-02-26 13:23:47: Member added.
+2024-02-26 14:37:19: Member deleted: fred
+2024-02-26 17:06:02: Member added: Fred
+2024-02-28 12:53:44: Member added: Doug
+2024-02-28 12:53:49: Member added: Fred
+2024-03-01 12:03:13: Member updated: d
+2024-03-01 12:03:35: Member deleted: d
+2024-03-01 19:44:28: Competition added: asd
+2024-03-01 19:44:46: Match pairing added for Douglas and Doug
+2024-03-01 19:44:46: Competition updated: asd
+2024-03-01 19:44:50: Failed adding scores: No such competition registered
+2024-03-01 19:45:12: Match pairing added for Douglas and Doug
+2024-03-01 19:45:12: Competition updated: asd
+2024-03-01 19:45:19: Scores fully entered for match
+2024-03-01 19:45:30: Scores fully entered for match
+2024-03-01 19:45:30: Matches fully scored for asd
+2024-03-01 19:45:30: Competition updated: asd
+2024-03-01 20:26:49: Competition added: FFF
+2024-03-01 20:27:05: Matches fully scored for FFF
+2024-03-01 20:27:05: Competition updated: FFF
+2024-03-01 20:27:17: Match pairing added for Douglas and Doug
+2024-03-01 20:27:17: Competition updated: FFF
+2024-03-01 20:27:28: Scores fully entered for match
+2024-03-01 20:27:28: Matches fully scored for FFF
+2024-03-01 20:27:28: Competition updated: FFF

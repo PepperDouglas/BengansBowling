@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "+s6thbrx0QCJfZi6d2SF6Wyn8jf613pVKROnTMacOb4SXA2Ww5xfO47F9KEfeIemO5IDTIaLdH54PwYjZZSuww==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\46707\\source\\repos\\BengansBowling\\BengansBowling\\BengansBowling.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\46707\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
