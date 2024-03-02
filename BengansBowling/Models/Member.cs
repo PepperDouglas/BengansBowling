@@ -13,8 +13,8 @@ namespace BengansBowling.Models
         public string Address { get; set; }
         public string Telephone { get; set; }
 
-        public Member(int id, string name, string address, string telephone) {
-            Id = id;
+        public Member(string name, string address, string telephone) {
+            //Id = id;
             Name = name;
             Address = address;
             Telephone = telephone;

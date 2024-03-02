@@ -19,8 +19,8 @@ namespace BengansBowling.Models
         public List<Match> Matches { get; set; }
         public CompetitionType Type { get; set; } // Added to indicate the type of competition
 
-        public Competition(int id, string name, CompetitionType type) {
-            Id = id;
+        public Competition(string name, CompetitionType type) {
+            //Id = id;
             Name = name;
             Type = type;
             Matches = new List<Match>();

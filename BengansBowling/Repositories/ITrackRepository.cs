@@ -9,11 +9,11 @@ namespace BengansBowling.Repositories
 {
     public interface ITrackRepository
     {
-        IEnumerable<Track> GetAll();
-        Track GetById(int id);
-        void Add(Track track);
-        void Update(Track track);
-        void Delete(int id);
+        Task<IEnumerable<Track>> GetAllAsync();
+        Task<Track> GetByIdAsync(int id);
+        Task AddAsync(Track track);
+        
     }
+
 
 }

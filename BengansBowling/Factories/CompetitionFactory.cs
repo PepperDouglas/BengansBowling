@@ -12,8 +12,8 @@ namespace BengansBowling.Factories
     public static class CompetitionFactory
     {
         public static Competition CreateCompetition(CompetitionType type, string name) {
-            int newId = GenerateNewId(); // Assume this method generates a unique ID for the competition
-            return new Competition(newId, name, type);
+            //int newId = GenerateNewId(); // Assume this method generates a unique ID for the competition
+            return new Competition(name, type);
         }
 
         // Placeholder for a method to generate a unique ID for a new competition

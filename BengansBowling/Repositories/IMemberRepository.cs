@@ -9,10 +9,10 @@ namespace BengansBowling.Repositories
 {
     public interface IMemberRepository
     {
-        IEnumerable<Member> GetAll();
-        Member GetById(int id);
-        void Add(Member member);
-        void Update(Member member);
-        void Delete(int id);
+        Task<IEnumerable<Member>> GetAllAsync();
+        Task<Member> GetByIdAsync(int id);
+        Task AddAsync(Member member);
+        Task UpdateAsync(Member member);
+        Task DeleteAsync(int id);
     }
 }

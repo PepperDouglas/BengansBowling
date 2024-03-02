@@ -16,27 +16,24 @@ namespace BengansBowling.Controllers
             _memberRepository = memberRepository;
         }
 
-        public void AddMember(string name, string address, string telephone) {
-            // Check if the repository is empty to determine the new ID
-            int newId = 1;
-            if (_memberRepository.GetAll().Any()) {
-                newId = _memberRepository.GetAll().Max(m => m.Id) + 1;
-            }
+        public async Task AddMember(string name, string address, string telephone) {
+            //var members = await _memberRepository.GetAllAsync();
+            //int newId = members.Any() ? members.Max(m => m.Id) + 1 : 1;
 
-            var member = new Member(newId, name, address, telephone);
-            _memberRepository.Add(member);
+            //var member = new Member(newId, name, address, telephone);
+            var member = new Member(name, address, telephone);
+            await _memberRepository.AddAsync(member);
 
             Console.WriteLine("Member added successfully.");
         }
 
-
-        public void UpdateMember(int id, string name, string address, string telephone) {
-            var member = _memberRepository.GetById(id);
+        public async Task UpdateMember(int id, string name, string address, string telephone) {
+            var member = await _memberRepository.GetByIdAsync(id);
             if (member != null) {
                 member.Name = name;
                 member.Address = address;
                 member.Telephone = telephone;
-                _memberRepository.Update(member);
+                await _memberRepository.UpdateAsync(member);
 
                 Console.WriteLine("Member updated successfully.");
             } else {
@@ -44,17 +41,18 @@ namespace BengansBowling.Controllers
             }
         }
 
-        public void DeleteMember(int id) {
-            _memberRepository.Delete(id);
+        public async Task DeleteMember(int id) {
+            await _memberRepository.DeleteAsync(id);
             Console.WriteLine("Member deleted successfully.");
         }
 
-        public void ListMembers() {
-            var members = _memberRepository.GetAll();
+        public async Task ListMembers() {
+            var members = await _memberRepository.GetAllAsync();
             foreach (var member in members) {
                 Console.WriteLine($"ID: {member.Id}, Name: {member.Name}, Address: {member.Address}, Telephone: {member.Telephone}");
             }
         }
     }
+
 
 }

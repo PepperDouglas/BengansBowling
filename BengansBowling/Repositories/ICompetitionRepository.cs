@@ -9,10 +9,10 @@ namespace BengansBowling.Repositories
 {
     public interface ICompetitionRepository
     {
-        IEnumerable<Competition> GetAll();
-        Competition GetById(int id);
-        void Add(Competition competition);
-        void Update(Competition competition);
-        void Delete(int id);
+        Task<IEnumerable<Competition>> GetAllAsync();
+        Task<Competition> GetByIdAsync(int id);
+        Task AddAsync(Competition competition);
+        Task UpdateAsync(Competition competition); // Reintroduced
     }
+
 }

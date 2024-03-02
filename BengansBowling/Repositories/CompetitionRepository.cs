@@ -1,63 +1,61 @@
 ﻿using BengansBowling.Models;
 using BengansBowling.Observers;
-using BengansBowling.Utilities;
-using System;
+using BengansBowling.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace BengansBowling.Repositories
+public class CompetitionRepository : ICompetitionRepository
 {
-    public class CompetitionRepository : ICompetitionRepository
-    {
-        private const string FilePath = "Competitions.json";
-        private List<Competition> _competitions;
-        private readonly ApplicationEventPublisher _eventPublisher;
+    private readonly BowlingAlleyContext _context;
+    private readonly ApplicationEventPublisher _eventPublisher;
 
-        public CompetitionRepository() {
-            _competitions = FileStorageHelper.ReadFromJsonFile<List<Competition>>(FilePath) ?? new List<Competition>();
+    public CompetitionRepository(BowlingAlleyContext context) {
+        _context = context;
+        _eventPublisher = new ApplicationEventPublisher();
+        var loggerObserver = new LoggerObserver();
+        _eventPublisher.Attach(loggerObserver);
+    }
 
-            _eventPublisher = new ApplicationEventPublisher();
-            var loggerObserver = new LoggerObserver();
-            _eventPublisher.Attach(loggerObserver);
-        }
+    public async Task<IEnumerable<Competition>> GetAllAsync() {
+        return await _context.Competitions.Include(c => c.Matches).ToListAsync();
+    }
 
-        public IEnumerable<Competition> GetAll() {
-            return _competitions;
-        }
+    public async Task<Competition> GetByIdAsync(int competitionId) {
+        return await _context.Competitions
+                             .Include(c => c.Matches)
+                                 .ThenInclude(m => m.PlayerOne) // Eagerly load PlayerOne
+                             .Include(c => c.Matches)
+                                 .ThenInclude(m => m.PlayerTwo) // Eagerly load PlayerTwo
+                             .Include(c => c.Matches)
+                                 .ThenInclude(m => m.Series) // Include this if you need Series too
+                             .FirstOrDefaultAsync(c => c.Id == competitionId);
+    }
 
-        public Competition GetById(int id) {
-            return _competitions.FirstOrDefault(c => c.Id == id);
-        }
-
-        public void Add(Competition competition) {
-            _competitions.Add(competition);
-            SaveChanges();
+    public async Task AddAsync(Competition competition) {
+        try {
+            await _context.Competitions.AddAsync(competition);
+            await _context.SaveChangesAsync();
             _eventPublisher.Notify($"Competition added: {competition.Name}");
-        }
 
-        public void Update(Competition competition) {
-            var index = _competitions.FindIndex(c => c.Id == competition.Id);
-            if (index != -1) {
-                _competitions[index] = competition;
-                SaveChanges();
-                _eventPublisher.Notify($"Competition updated: {competition.Name}");
-            }
-        }
-
-        public void Delete(int id) {
-            var competition = GetById(id);
-            if (competition != null) {
-                _competitions.Remove(competition);
-                SaveChanges();
-                _eventPublisher.Notify($"Competition removed: {competition.Name}");
-            }
-        }
-
-        private void SaveChanges() {
-            FileStorageHelper.WriteToJsonFile(FilePath, _competitions);
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
         }
     }
 
+    public async Task UpdateAsync(Competition competition) {
+        var existingCompetition = await _context.Competitions.FindAsync(competition.Id);
+        if (existingCompetition != null) {
+            // Map the properties you wish to update
+            existingCompetition.Name = competition.Name;
+            // Add other properties as needed
+            //notneeded maybe
+            _context.Competitions.Update(competition);
+            await _context.SaveChangesAsync();
+            _eventPublisher.Notify($"Competition updated: {competition.Name}");
+        }
+    }
+
+    // Removed Update and Delete methods
 }

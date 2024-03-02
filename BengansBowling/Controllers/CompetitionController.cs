@@ -18,38 +18,35 @@ namespace BengansBowling.Controllers
         private readonly IMemberRepository _memberRepository; // Assume you have this
         // Assuming you have an alley repository or a way to manage alleys
         private readonly ITrackRepository _trackRepository;
+        private readonly IMatchRepository _matchRepository;
         private readonly ApplicationEventPublisher _eventPublisher;
 
-        public CompetitionController(ICompetitionRepository competitionRepository, IMemberRepository memberRepository, ITrackRepository trackRepository) {
+        public CompetitionController(ICompetitionRepository competitionRepository, IMemberRepository memberRepository, ITrackRepository trackRepository, IMatchRepository matchRepository) {
             _competitionRepository = competitionRepository;
             _memberRepository = memberRepository;
             _trackRepository = trackRepository; // Initialize the track repository
+            _matchRepository = matchRepository;
 
             _eventPublisher = new ApplicationEventPublisher();
             var loggerObserver = new LoggerObserver();
             _eventPublisher.Attach(loggerObserver);
         }
 
-        public void AddCompetition(string name, CompetitionType type) {
-            // Check if the repository is empty to determine the new ID
-            int newId = 1;
-            if (_competitionRepository.GetAll().Any()) {
-                newId = _competitionRepository.GetAll().Max(c => c.Id) + 1;
-            }
-
+        public async Task AddCompetitionAsync(string name, CompetitionType type) {
             // Use the CompetitionFactory to create a competition of the specified type
             var competition = CompetitionFactory.CreateCompetition(type, name);
-            competition.Id = newId; // Set the newly generated ID
 
-            _competitionRepository.Add(competition);
+            // No need to set the ID manually; the database will generate it
+            await _competitionRepository.AddAsync(competition); // Ensure AddAsync method exists and is awaited
             Console.WriteLine($"{type} competition added successfully: {name}");
         }
 
-        public void UpdateCompetition(int id, string name) {
-            var competition = _competitionRepository.GetById(id);
+
+        public async Task UpdateCompetitionAsync(int id, string name) {
+            var competition = await _competitionRepository.GetByIdAsync(id);
             if (competition != null) {
                 competition.Name = name;
-                _competitionRepository.Update(competition);
+                await _competitionRepository.UpdateAsync(competition);
 
                 Console.WriteLine("Competition updated successfully.");
             } else {
@@ -57,23 +54,24 @@ namespace BengansBowling.Controllers
             }
         }
 
-        public void DeleteCompetition(int id) {
-            _competitionRepository.Delete(id);
-            Console.WriteLine("Competition deleted successfully.");
-        }
 
-        public void ListCompetitions() {
-            var competitions = _competitionRepository.GetAll();
+        //public void DeleteCompetition(int id) {
+        //    _competitionRepository.Delete(id);
+        //    Console.WriteLine("Competition deleted successfully.");
+        //}
+
+        public async Task ListCompetitions() {
+            var competitions = await _competitionRepository.GetAllAsync();
             foreach (var competition in competitions) {
                 Console.WriteLine($"ID: {competition.Id}, Name: {competition.Name}");
             }
             Console.Write("Enter the ID of the competition to view details: ");
             int selectedId = Convert.ToInt32(Console.ReadLine());
-            DisplayCompetitionDetails(selectedId);
+            await DisplayCompetitionDetails(selectedId);
         }
 
-        public void DisplayCompetitionDetails(int competitionId) {
-            var competition = _competitionRepository.GetById(competitionId);
+        public async Task DisplayCompetitionDetails(int competitionId) {
+            var competition = await _competitionRepository.GetByIdAsync(competitionId);
             if (competition == null) {
                 Console.WriteLine("Competition not found.");
                 return;
@@ -82,12 +80,14 @@ namespace BengansBowling.Controllers
             Console.WriteLine($"Competition: {competition.Name}");
             foreach (var match in competition.Matches) {
                 string result = match.Winner != null ? $"Winner: {match.Winner.Name}" : "No winner yet (or tie)";
-                Console.WriteLine($"Match {match.Id} between {match.PlayerOne.Name} and {match.PlayerTwo.Name}: {result}");
+                //Console.WriteLine($"Match {match.Id} between {match.PlayerOne.Name} and {match.PlayerTwo.Name}: {result}");
+                Console.WriteLine($"Match {match.Id}: {result}");
             }
         }
 
-        public void AddMatchesToCompetition(int competitionId, List<int> memberIds) {
-            var competition = _competitionRepository.GetById(competitionId);
+        //This one adds matches to competitions
+        public async Task AddMatchesToCompetition(int competitionId, List<int> memberIds) {
+            var competition = await _competitionRepository.GetByIdAsync(competitionId);
             if (competition == null) {
                 Console.WriteLine("Competition not found.");
                 _eventPublisher.Notify($"Failed adding matches: Competition not found");
@@ -100,59 +100,74 @@ namespace BengansBowling.Controllers
                 return;
             }
 
-            var availableTracks = _trackRepository.GetAll().ToList();
-            if (availableTracks.Count < memberIds.Count / 2) {
+            var availableTracks = await _trackRepository.GetAllAsync();
+            var trackList = availableTracks.ToList();
+            if (trackList.Count < memberIds.Count / 2) {
                 Console.WriteLine("Not enough available tracks.");
                 _eventPublisher.Notify($"Failed adding matches: Not enough available tracks");
                 return;
             }
 
-            int nextMatchId = competition.Matches.Any() ? competition.Matches.Max(m => m.Id) + 1 : 1;
             int seriesCount = competition.Type == CompetitionType.Amateur ? 2 : 3; // Determine series count based on competition type
 
             for (int i = 0; i < memberIds.Count; i += 2) {
-                var playerOne = _memberRepository.GetById(memberIds[i]);
-                var playerTwo = _memberRepository.GetById(memberIds[i + 1]);
-                var track = availableTracks[i / 2];
+                var playerOne = await _memberRepository.GetByIdAsync(memberIds[i]);
+                var playerTwo = await _memberRepository.GetByIdAsync(memberIds[i + 1]);
+                var track = trackList[i / 2];
 
-                // Create the Match with an empty Series list
-                var match = new Match(nextMatchId++, playerOne, playerTwo, track);
+                // Create the Match without manually setting an ID
+                var match = new Match
+                {
+                    PlayerOne = playerOne,
+                    PlayerTwo = playerTwo,
+                    Track = track,
+                    Series = new List<Series>(),
+                    // Optionally set the competition ID if the Match entity has a foreign key for Competition
+                    CompetitionId = competitionId
+                };
 
-                // Reset seriesId for each match
-                int seriesId = 1;
-
-                // Initialize the Series list based on the determined series count
+                // Initialize the Series list based on the determined series count, ID will be auto-generated
                 for (int seriesIndex = 0; seriesIndex < seriesCount; seriesIndex++) {
-                    // Initialize scores to 0
-                    match.Series.Add(new Series(seriesId++, 0, 0)); // Adjusted to use Series constructor
+                    match.Series.Add(new Series(0, 0 ));
                 }
 
                 // Assign a scoring strategy based on competition type
                 match.ScoringStrategy = competition.Type == CompetitionType.Professional ? new ProfessionalScoringStrategy() : new AmateurScoringStrategy();
-                competition.Matches.Add(match);
+
+                // Use _matchRepository to add the match
+                await _matchRepository.AddAsync(match);
 
                 _eventPublisher.Notify($"Match pairing added for {playerOne.Name} and {playerTwo.Name}");
             }
 
-            _competitionRepository.Update(competition);
             Console.WriteLine("Matches added to competition successfully.");
         }
 
 
-        public void EnterScoresForCompetitionMatches(int competitionId, ConsoleView view) {
-            var competition = _competitionRepository.GetById(competitionId);
+
+        public async Task EnterScoresForCompetitionMatches(int competitionId, ConsoleView view) {
+            //this one needs to include series
+            var competition = await _competitionRepository.GetByIdAsync(competitionId);
             if (competition == null) {
                 Console.WriteLine("Competition not found.");
                 _eventPublisher.Notify($"Failed adding scores: No such competition registered");
                 return;
             }
 
+            // Select the scoring strategy based on the competition type
+            IScoringStrategy scoringStrategy = competition.Type == CompetitionType.Professional
+                ? new ProfessionalScoringStrategy()
+                : new AmateurScoringStrategy();
+
             foreach (var match in competition.Matches) {
                 Console.WriteLine($"Entering scores for Match {match.Id} between Player {match.PlayerOne.Name} and Player {match.PlayerTwo.Name}.");
+                //For only ID is got
+                //Console.WriteLine($"Entering scores for Match {match.Id} between PlayerID {match.PlayerOneId} and PlayerID {match.PlayerTwoId}.");
 
                 // Assuming each match has a predetermined number of series to play
                 for (int i = 0; i < match.Series.Count; i++) {
                     // Call ConsoleView methods to get series scores for each player
+                    //Console.WriteLine(match.PlayerOne.Name);
                     var scores = view.GetSeriesScores(i + 1, match.PlayerOne.Name, match.PlayerTwo.Name);
                     match.Series[i].ScorePlayerOne = scores.Item1;
                     match.Series[i].ScorePlayerTwo = scores.Item2;
@@ -160,13 +175,16 @@ namespace BengansBowling.Controllers
 
                 _eventPublisher.Notify($"Scores fully entered for match");
                 // After updating series scores, determine the winner
+                // Apply the scoring strategy to determine the winner
+                match.ScoringStrategy = scoringStrategy;
                 match.DetermineWinner();
                 Console.WriteLine($"Winner: {match.Winner?.Name ?? "Tie"}");
+                
             }
-
+            // or should this be one up?
+            await _competitionRepository.UpdateAsync(competition);
             _eventPublisher.Notify($"Matches fully scored for {competition.Name}");
             // Update the competition to reflect the changes
-            _competitionRepository.Update(competition);
         }
     }
 

@@ -72,21 +72,18 @@ namespace BengansBowling.Views
             }
         }
 
-            public void AddTrack(TrackRepository trackRepository) {
+            public async void AddTrack(TrackRepository trackRepository) {
                 Console.Write("Enter track name: ");
                 string name = Console.ReadLine();
 
-                // Generate a new ID for the track
-                var tracks = trackRepository.GetAll().ToList();
-                int newId = tracks.Any() ? tracks.Max(t => t.Id) + 1 : 1;
-
-                var track = new Track(newId, name);
-                trackRepository.Add(track);
+               
+                var track = new Track(name);
+                await trackRepository.AddAsync(track);
 
                 Console.WriteLine("Track added successfully.");
             }
 
-            public void ShowCompetitionManagementMenu(CompetitionController competitionController) {
+            public async Task ShowCompetitionManagementMenu(CompetitionController competitionController) {
             bool back = false;
             while (!back) {
                 int choice = ShowCompetitionMenu();
@@ -95,7 +92,7 @@ namespace BengansBowling.Views
                     CreateCompetition(competitionController);
                     break;
                     case 2:
-                    competitionController.ListCompetitions();
+                    await competitionController.ListCompetitions();
                     break;
                     case 3:
                     AddMatchesToCompetition(competitionController);
@@ -106,7 +103,7 @@ namespace BengansBowling.Views
                     case 4: // Adjust this to be the "back to main menu" option, if you've added new options
                     Console.Write("Enter the ID of the competition to enter scores for: ");
                     int competitionId = Convert.ToInt32(Console.ReadLine());
-                    competitionController.EnterScoresForCompetitionMatches(competitionId, this);
+                    await competitionController.EnterScoresForCompetitionMatches(competitionId, this);
                     break;
                     case 5:
                     back = true;
@@ -143,6 +140,7 @@ namespace BengansBowling.Views
 
 
         public (string Name, CompetitionType Type) GetCompetitionDetails() {
+            //This is it, not in Program.cs
             Console.Write("Enter competition name: ");
             string name = Console.ReadLine();
 
@@ -170,7 +168,7 @@ namespace BengansBowling.Views
         // Add a method for creating a competition
         public void CreateCompetition(CompetitionController competitionController) {
             var (Name, Type) = GetCompetitionDetails();
-            competitionController.AddCompetition(Name, Type);
+            competitionController.AddCompetitionAsync(Name, Type);
         }
 
         // Method to prompt for member details

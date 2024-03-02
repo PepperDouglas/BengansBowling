@@ -1,7 +1,7 @@
 [
   {
     "Id": 1,
-    "Name": "asd",
+    "Name": "dd",
     "Matches": [
       {
         "Id": 1,
@@ -17,79 +17,9 @@
           "Address": "asd",
           "Telephone": "123"
         },
-        "Series": [
-          {
-            "Id": 1,
-            "ScorePlayerOne": 12,
-            "ScorePlayerTwo": 12
-          },
-          {
-            "Id": 2,
-            "ScorePlayerOne": 22,
-            "ScorePlayerTwo": 11
-          }
-        ],
-        "Track": {
-          "Id": 1,
-          "Name": "supertrack"
-        },
-        "Winner": null,
-        "ScoringStrategy": null
-      },
-      {
-        "Id": 2,
-        "PlayerOne": {
-          "Id": 1,
-          "Name": "Douglas",
-          "Address": "Ritarvagen 8",
-          "Telephone": "070888333"
-        },
-        "PlayerTwo": {
-          "Id": 3,
-          "Name": "Doug",
-          "Address": "asd",
-          "Telephone": "123"
-        },
-        "Series": [
-          {
-            "Id": 1,
-            "ScorePlayerOne": 22,
-            "ScorePlayerTwo": 11
-          },
-          {
-            "Id": 2,
-            "ScorePlayerOne": 33,
-            "ScorePlayerTwo": 44
-          }
-        ],
-        "Track": {
-          "Id": 1,
-          "Name": "supertrack"
-        },
-        "Winner": null,
-        "ScoringStrategy": null
-      }
-    ],
-    "Type": 0
-  },
-  {
-    "Id": 2,
-    "Name": "FFF",
-    "Matches": [
-      {
-        "Id": 1,
-        "PlayerOne": {
-          "Id": 1,
-          "Name": "Douglas",
-          "Address": "Ritarvagen 8",
-          "Telephone": "070888333"
-        },
-        "PlayerTwo": {
-          "Id": 3,
-          "Name": "Doug",
-          "Address": "asd",
-          "Telephone": "123"
-        },
+        "PlayerOneId": 0,
+        "PlayerTwoId": 0,
+        "TrackId": 0,
         "Series": [
           {
             "Id": 1,

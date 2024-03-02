@@ -11,8 +11,8 @@ namespace BengansBowling.Models
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public Track(int id, string name) {
-            Id = id;
+        public Track(string name) {
+            
             Name = name;
         }
     }

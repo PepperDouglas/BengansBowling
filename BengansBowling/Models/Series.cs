@@ -12,8 +12,8 @@ namespace BengansBowling.Models
         public int ScorePlayerOne { get; set; }
         public int ScorePlayerTwo { get; set; }
 
-        public Series(int id, int scorePlayerOne, int scorePlayerTwo) {
-            Id = id;
+        public Series(int scorePlayerOne, int scorePlayerTwo) {
+            //Id = id;
             ScorePlayerOne = scorePlayerOne;
             ScorePlayerTwo = scorePlayerTwo;
         }
