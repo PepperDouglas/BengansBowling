@@ -17,10 +17,6 @@ namespace BengansBowling.Controllers
         }
 
         public async Task AddMember(string name, string address, string telephone) {
-            //var members = await _memberRepository.GetAllAsync();
-            //int newId = members.Any() ? members.Max(m => m.Id) + 1 : 1;
-
-            //var member = new Member(newId, name, address, telephone);
             var member = new Member(name, address, telephone);
             await _memberRepository.AddAsync(member);
 

@@ -20,7 +20,7 @@ namespace BengansBowling.Strategies
 
             if (winsPlayerOne > winsPlayerTwo) return match.PlayerOne;
             else if (winsPlayerTwo > winsPlayerOne) return match.PlayerTwo;
-            else return null; // It's a tie
+            else return null;
         }
     }
 

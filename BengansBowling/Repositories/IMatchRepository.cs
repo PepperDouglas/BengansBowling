@@ -12,7 +12,7 @@ namespace BengansBowling.Repositories
         Task<IEnumerable<Match>> GetAllAsync();
         Task<Match> GetByIdAsync(int id);
         Task AddAsync(Match match);
-        Task UpdateAsync(Match match); // Reintroduced
+        Task UpdateAsync(Match match);
     }
 
 }

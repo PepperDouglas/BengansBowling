@@ -14,7 +14,6 @@ namespace BengansBowling.Models
         public string Telephone { get; set; }
 
         public Member(string name, string address, string telephone) {
-            //Id = id;
             Name = name;
             Address = address;
             Telephone = telephone;

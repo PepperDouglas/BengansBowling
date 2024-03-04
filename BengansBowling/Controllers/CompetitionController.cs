@@ -15,8 +15,7 @@ namespace BengansBowling.Controllers
     public class CompetitionController
     {
         private readonly ICompetitionRepository _competitionRepository;
-        private readonly IMemberRepository _memberRepository; // Assume you have this
-        // Assuming you have an alley repository or a way to manage alleys
+        private readonly IMemberRepository _memberRepository;
         private readonly ITrackRepository _trackRepository;
         private readonly IMatchRepository _matchRepository;
         private readonly ApplicationEventPublisher _eventPublisher;
@@ -24,7 +23,7 @@ namespace BengansBowling.Controllers
         public CompetitionController(ICompetitionRepository competitionRepository, IMemberRepository memberRepository, ITrackRepository trackRepository, IMatchRepository matchRepository) {
             _competitionRepository = competitionRepository;
             _memberRepository = memberRepository;
-            _trackRepository = trackRepository; // Initialize the track repository
+            _trackRepository = trackRepository;
             _matchRepository = matchRepository;
 
             _eventPublisher = new ApplicationEventPublisher();
@@ -33,11 +32,9 @@ namespace BengansBowling.Controllers
         }
 
         public async Task AddCompetitionAsync(string name, CompetitionType type) {
-            // Use the CompetitionFactory to create a competition of the specified type
             var competition = CompetitionFactory.CreateCompetition(type, name);
 
-            // No need to set the ID manually; the database will generate it
-            await _competitionRepository.AddAsync(competition); // Ensure AddAsync method exists and is awaited
+            await _competitionRepository.AddAsync(competition);
             Console.WriteLine($"{type} competition added successfully: {name}");
         }
 
@@ -53,12 +50,6 @@ namespace BengansBowling.Controllers
                 Console.WriteLine("Competition not found.");
             }
         }
-
-
-        //public void DeleteCompetition(int id) {
-        //    _competitionRepository.Delete(id);
-        //    Console.WriteLine("Competition deleted successfully.");
-        //}
 
         public async Task ListCompetitions() {
             var competitions = await _competitionRepository.GetAllAsync();
@@ -80,12 +71,10 @@ namespace BengansBowling.Controllers
             Console.WriteLine($"Competition: {competition.Name}");
             foreach (var match in competition.Matches) {
                 string result = match.Winner != null ? $"Winner: {match.Winner.Name}" : "No winner yet (or tie)";
-                //Console.WriteLine($"Match {match.Id} between {match.PlayerOne.Name} and {match.PlayerTwo.Name}: {result}");
                 Console.WriteLine($"Match {match.Id}: {result}");
             }
         }
 
-        //This one adds matches to competitions
         public async Task AddMatchesToCompetition(int competitionId, List<int> memberIds) {
             var competition = await _competitionRepository.GetByIdAsync(competitionId);
             if (competition == null) {
@@ -108,33 +97,27 @@ namespace BengansBowling.Controllers
                 return;
             }
 
-            int seriesCount = competition.Type == CompetitionType.Amateur ? 2 : 3; // Determine series count based on competition type
+            int seriesCount = competition.Type == CompetitionType.Amateur ? 2 : 3;
 
             for (int i = 0; i < memberIds.Count; i += 2) {
                 var playerOne = await _memberRepository.GetByIdAsync(memberIds[i]);
                 var playerTwo = await _memberRepository.GetByIdAsync(memberIds[i + 1]);
                 var track = trackList[i / 2];
 
-                // Create the Match without manually setting an ID
                 var match = new Match
                 {
                     PlayerOne = playerOne,
                     PlayerTwo = playerTwo,
                     Track = track,
                     Series = new List<Series>(),
-                    // Optionally set the competition ID if the Match entity has a foreign key for Competition
                     CompetitionId = competitionId
                 };
 
-                // Initialize the Series list based on the determined series count, ID will be auto-generated
                 for (int seriesIndex = 0; seriesIndex < seriesCount; seriesIndex++) {
                     match.Series.Add(new Series(0, 0 ));
                 }
 
-                // Assign a scoring strategy based on competition type
                 match.ScoringStrategy = competition.Type == CompetitionType.Professional ? new ProfessionalScoringStrategy() : new AmateurScoringStrategy();
-
-                // Use _matchRepository to add the match
                 await _matchRepository.AddAsync(match);
 
                 _eventPublisher.Notify($"Match pairing added for {playerOne.Name} and {playerTwo.Name}");
@@ -144,9 +127,7 @@ namespace BengansBowling.Controllers
         }
 
 
-
         public async Task EnterScoresForCompetitionMatches(int competitionId, ConsoleView view) {
-            //this one needs to include series
             var competition = await _competitionRepository.GetByIdAsync(competitionId);
             if (competition == null) {
                 Console.WriteLine("Competition not found.");
@@ -154,38 +135,26 @@ namespace BengansBowling.Controllers
                 return;
             }
 
-            // Select the scoring strategy based on the competition type
             IScoringStrategy scoringStrategy = competition.Type == CompetitionType.Professional
                 ? new ProfessionalScoringStrategy()
                 : new AmateurScoringStrategy();
 
             foreach (var match in competition.Matches) {
                 Console.WriteLine($"Entering scores for Match {match.Id} between Player {match.PlayerOne.Name} and Player {match.PlayerTwo.Name}.");
-                //For only ID is got
-                //Console.WriteLine($"Entering scores for Match {match.Id} between PlayerID {match.PlayerOneId} and PlayerID {match.PlayerTwoId}.");
-
-                // Assuming each match has a predetermined number of series to play
                 for (int i = 0; i < match.Series.Count; i++) {
-                    // Call ConsoleView methods to get series scores for each player
-                    //Console.WriteLine(match.PlayerOne.Name);
                     var scores = view.GetSeriesScores(i + 1, match.PlayerOne.Name, match.PlayerTwo.Name);
                     match.Series[i].ScorePlayerOne = scores.Item1;
                     match.Series[i].ScorePlayerTwo = scores.Item2;
                 }
 
                 _eventPublisher.Notify($"Scores fully entered for match");
-                // After updating series scores, determine the winner
-                // Apply the scoring strategy to determine the winner
                 match.ScoringStrategy = scoringStrategy;
                 match.DetermineWinner();
                 Console.WriteLine($"Winner: {match.Winner?.Name ?? "Tie"}");
                 
             }
-            // or should this be one up?
             await _competitionRepository.UpdateAsync(competition);
             _eventPublisher.Notify($"Matches fully scored for {competition.Name}");
-            // Update the competition to reflect the changes
         }
     }
-
 }

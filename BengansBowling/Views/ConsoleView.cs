@@ -96,18 +96,14 @@ namespace BengansBowling.Views
                     break;
                     case 3:
                     AddMatchesToCompetition(competitionController);
-                    // After adding matches, prompt to enter scores for these matches
-                    
                     break;
-                    // Adjust case numbers as needed
-                    case 4: // Adjust this to be the "back to main menu" option, if you've added new options
+                    case 4:
                     Console.Write("Enter the ID of the competition to enter scores for: ");
                     int competitionId = Convert.ToInt32(Console.ReadLine());
                     await competitionController.EnterScoresForCompetitionMatches(competitionId, this);
                     break;
                     case 5:
                     back = true;
-
                     break;
                     default:
                     Console.WriteLine("Invalid choice, please try again.");
@@ -134,16 +130,13 @@ namespace BengansBowling.Views
                 memberIds.Add(memberId);
             }
 
-            // Call the controller method to add matches to the competition
             competitionController.AddMatchesToCompetition(competitionId, memberIds);
         }
 
 
         public (string Name, CompetitionType Type) GetCompetitionDetails() {
-            //This is it, not in Program.cs
             Console.Write("Enter competition name: ");
             string name = Console.ReadLine();
-
             Console.WriteLine("Select competition type:");
             Console.WriteLine("1. Amateur");
             Console.WriteLine("2. Professional");
@@ -165,13 +158,11 @@ namespace BengansBowling.Views
             return (scorePlayerOne, scorePlayerTwo);
         }
 
-        // Add a method for creating a competition
         public void CreateCompetition(CompetitionController competitionController) {
             var (Name, Type) = GetCompetitionDetails();
             competitionController.AddCompetitionAsync(Name, Type);
         }
 
-        // Method to prompt for member details
         public (string Name, string Address, string Telephone) GetMemberDetails() {
             Console.Write("Enter member name: ");
             string name = Console.ReadLine();
@@ -185,13 +176,11 @@ namespace BengansBowling.Views
             return (name, address, telephone);
         }
 
-        // Method to prompt for competition name
         public string GetCompetitionName() {
             Console.Write("Enter competition name: ");
             return Console.ReadLine();
         }
 
-        // Method to prompt for an ID
         public int GetId(string entityType) {
             Console.Write($"Enter {entityType} ID: ");
             return Convert.ToInt32(Console.ReadLine());

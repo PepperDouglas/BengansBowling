@@ -12,12 +12,9 @@ public class ScoringStrategyConverter : JsonConverter
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
         JObject jo = JObject.Load(reader);
 
-        // Check if TypeName exists and is not null
         JToken typeNameToken = jo["TypeName"];
         if (typeNameToken == null) {
-            // Handle the case where TypeName is missing or ScoringStrategy is empty
-            // You could return null, or a default instance of a scoring strategy
-            return null; // Or return a new DefaultScoringStrategy() if you have a default implementation
+            return null;
         }
 
         string typeName = typeNameToken.Value<string>();

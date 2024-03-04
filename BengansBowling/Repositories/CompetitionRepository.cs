@@ -6,6 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+//Repository pattern används för att kapsla in den logik som krävs för att komma åt datakällor,
+//vilket ger ett mer abstrakt gränssnitt till datalagret. Denna separation av problem gör dataåtkomstlagret mer hanterbart
+//och det förenklar dataoperationer som CRUD, vilket gör applikationen mer underhållbar och testbar.
+
+
 public class CompetitionRepository : ICompetitionRepository
 {
     private readonly BowlingAlleyContext _context;
@@ -25,11 +30,11 @@ public class CompetitionRepository : ICompetitionRepository
     public async Task<Competition> GetByIdAsync(int competitionId) {
         return await _context.Competitions
                              .Include(c => c.Matches)
-                                 .ThenInclude(m => m.PlayerOne) // Eagerly load PlayerOne
+                                 .ThenInclude(m => m.PlayerOne)
                              .Include(c => c.Matches)
-                                 .ThenInclude(m => m.PlayerTwo) // Eagerly load PlayerTwo
+                                 .ThenInclude(m => m.PlayerTwo)
                              .Include(c => c.Matches)
-                                 .ThenInclude(m => m.Series) // Include this if you need Series too
+                                 .ThenInclude(m => m.Series)
                              .FirstOrDefaultAsync(c => c.Id == competitionId);
     }
 
@@ -47,15 +52,10 @@ public class CompetitionRepository : ICompetitionRepository
     public async Task UpdateAsync(Competition competition) {
         var existingCompetition = await _context.Competitions.FindAsync(competition.Id);
         if (existingCompetition != null) {
-            // Map the properties you wish to update
             existingCompetition.Name = competition.Name;
-            // Add other properties as needed
-            //notneeded maybe
             _context.Competitions.Update(competition);
             await _context.SaveChangesAsync();
             _eventPublisher.Notify($"Competition updated: {competition.Name}");
         }
     }
-
-    // Removed Update and Delete methods
 }

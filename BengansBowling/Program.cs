@@ -9,17 +9,10 @@ namespace BengansBowling
     {
         static async Task Main(string[] args) {
 
-            // Configure DbContextOptions for BowlingAlleyContext
             var optionsBuilder = new DbContextOptionsBuilder<BowlingAlleyContext>();
             optionsBuilder.UseSqlServer(@"Server=DESKTOP-HUERL9P;Database=BengansBowling;Trusted_Connection=True;TrustServerCertificate=True;");
 
-            // Create an instance of BowlingAlleyContext
             using (var context = new BowlingAlleyContext(optionsBuilder.Options)) { 
-            
-            
-
-
-
                 var memberRepository = new MemberRepository(context);
                 var competitionRepository = new CompetitionRepository(context);
                 var trackRepository = new TrackRepository(context);
@@ -94,19 +87,17 @@ namespace BengansBowling
                         case 2:
                         string updateName = view.GetCompetitionName();
                         int updateId = view.GetId("competition");
-                        //competitionController.UpdateCompetition(updateId, updateName);
                         break;
                         case 3:
                         int deleteId = view.GetId("competition");
-                        //competitionController.DeleteCompetition(deleteId);
                         break;
                         case 4:
                         competitionController.ListCompetitions();
                         break;
-                        case 5: // New case for entering scores for competition matches
+                        case 5:
                         EnterScoresForCompetitionMatches(view, competitionController);
                         break;
-                        case 6: // New case for adding matches to a competition
+                        case 6:
                         AddMatchesToCompetition(view, competitionController);
                         break;
                         case 7:
@@ -123,13 +114,11 @@ namespace BengansBowling
                 Console.Write("Enter the ID of the competition to enter scores for: ");
                 int competitionId = Convert.ToInt32(Console.ReadLine());
 
-                // Call the corresponding controller method to enter scores for matches
                 competitionController.EnterScoresForCompetitionMatches(competitionId, view);
             }
 
             static void AddMatchesToCompetition(ConsoleView view, CompetitionController competitionController) {
-                // Implement the method to add matches to a competition here
-                // You can reuse the existing method from ConsoleView or create a new one
+
             }
         }
     }

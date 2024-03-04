@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BengansBowling")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b7cb4dc76795b78af8df15c5eae1ed4bbbed3462")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff80a58d60e5086e4fe8b2ba210101619e19a918")]
 [assembly: System.Reflection.AssemblyProductAttribute("BengansBowling")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BengansBowling")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

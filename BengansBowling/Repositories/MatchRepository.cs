@@ -47,22 +47,17 @@ namespace BengansBowling.Repositories
         }
 
         public async Task UpdateAsync(Match match) {
-            var existingMatch = await _context.Matches.Include(m => m.Series) // Include related entities as necessary
+            var existingMatch = await _context.Matches.Include(m => m.Series)
                                              .FirstOrDefaultAsync(m => m.Id == match.Id);
             if (existingMatch != null) {
-                // Update properties of existingMatch as needed
                 existingMatch.PlayerOneId = match.PlayerOneId;
                 existingMatch.PlayerTwoId = match.PlayerTwoId;
                 existingMatch.TrackId = match.TrackId;
-                // Handle updating nested collections like Series, if applicable
-
                 await _context.SaveChangesAsync();
                 _eventPublisher.Notify($"Match updated: {match.Id}");
             } else {
-                // Handle the case where the match doesn't exist (optional)
             }
         }
-        // Additional methods as needed...
     }
 
 }
